@@ -27,7 +27,7 @@ const SearchView = (props) => {
         const img_url = IMG_URL + movie.backdrop_path;
 
         return (
-        <div className="card col-lg-4" key={key}>
+        <div className="card col-lg-4 col-md-6 col-sm-12" key={key}>
             <img className="card-img-top" src={img_url} alt="" />
             <div className="card-body">
                 <h3>{title}</h3>
