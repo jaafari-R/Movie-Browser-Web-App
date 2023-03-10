@@ -1,16 +1,17 @@
-
+const TMDB_IMG_URL = "https://image.tmdb.org/t/p/original/"
+const TMDB_IMG_URL_W500 = "https://image.tmdb.org/t/p/w500/"
 
 class SearchMovie {
     /**
      * 
      * @param movies list of received movies from a search operation
      * @param page page of movies / using pagination
-     * @param pages_left boolean - true if this is the last page
+     * @param isLastPage boolean - true if this is the last page
      */
-    constructor(movies, page, pages_left) {
+    constructor(movies, page, isLastPage) {
         this.movies = movies;
         this.page = page;
-        this.pages_left = pages_left;
+        this.isLastPage = isLastPage;
     }
 }
 
@@ -35,12 +36,13 @@ class TMDBApi {
             fetch(searchURL)
                 .then((res) => res.json())
                 .then((data) => {
-                    const reso = new SearchMovie(data.results, data.page, data.page < data.total_pages) 
-                    console.log(reso)
-                    response(new SearchMovie(data.results, data.page, data.page < data.total_pages))
+                    response(new SearchMovie(data.results, data.page, data.page >= data.total_pages))
                 })
         })
     }
 }
 
-module.exports = TMDBApi
+module.exports = TMDBApi;
+
+module.exports.TMDB_IMG_URL = TMDB_IMG_URL;
+module.exports.TMDB_IMG_URL_W500 = TMDB_IMG_URL_W500;
