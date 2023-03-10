@@ -1,6 +1,9 @@
+import { useEffect } from "react";
 
 const Home = (props) => {
-    props.setHero('Home Hero');
+    useEffect(() => {
+        props.setHero('Home Hero');
+    });
 
     return (
         <div>
