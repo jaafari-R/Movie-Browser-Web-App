@@ -35,6 +35,26 @@ function App() {
 
 
   useEffect(() => {
+
+    const searchMovies = () => {
+      return new Promise((res, rej) => {
+        res(tmdbApi.searchMoviesByStringQuery(searchText));
+      });
+    }
+
+    const loadSearchResults = async (searchRes, searchTime) => {
+      if(searchTime < resTime)
+        return;
+      
+      await searchRes
+
+      setResTime(searchTime);
+      setMovies(searchRes.movies);
+      setPage(searchRes.page);
+      setIsLastPage(searchRes.isLastPage);
+    }
+
+    
     const searchTime = Date.now();
 
     if(!searchText)
@@ -44,25 +64,7 @@ function App() {
       .then((moviesResult) => {
         loadSearchResults(moviesResult, searchTime);
       });
-  }, [searchText]);
-
-  const searchMovies = () => {
-    return new Promise((res, rej) => {
-      res(tmdbApi.searchMoviesByStringQuery(searchText));
-    });
-  }
-
-  const loadSearchResults = async (searchRes, searchTime) => {
-    if(searchTime < resTime)
-      return;
-    
-    await searchRes
-
-    setResTime(searchTime);
-    setMovies(searchRes.movies);
-    setPage(searchRes.page);
-    setIsLastPage(searchRes.isLastPage);
-  }
+  }, [resTime, searchText]);
 
   return (
     <div>

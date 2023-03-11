@@ -11,12 +11,16 @@ const SearchView = (props) => {
     });
 
     useEffect(() => {
+
+        const loadMoviesCards = () => {
+            setMoviesCards(props.movies.map((movie, i) => createCard(movie, i)));
+        }
+
+        
         loadMoviesCards();
     }, [props.movies, props.page, props.isLastPage]);
 
-    const loadMoviesCards = () => {
-        setMoviesCards(props.movies.map((movie, i) => createCard(movie, i)));
-    }
+
 
     function createCard(movie, key) {
         console.log(movie)
