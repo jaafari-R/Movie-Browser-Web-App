@@ -24,9 +24,6 @@ const MoviesView = (props) => {
 
 
     function createCard(movie, key) {
-        console.log(movie)
-        console.log(movie.name)
-
         const title = movie.title || movie.name;
         const description = movie.overview;
         const img_url = IMG_URL + movie.backdrop_path;
