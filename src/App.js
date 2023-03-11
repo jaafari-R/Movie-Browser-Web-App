@@ -54,12 +54,16 @@ function App() {
     await searchRes
 
     setResTime(searchTime);
-    setMovies([...movies, ...searchRes.movies]);
+    if(append) 
+      setMovies([...movies, ...searchRes.movies]);
+    else
+      setMovies(searchRes.movies);
     setIsLastPage(searchRes.isLastPage);
   }
 
   useEffect(() => {
     const searchTime = Date.now();
+    setPage(1); // reset page
 
     /**
      * If no search was performed(searchText is empty), get the most popular movies
