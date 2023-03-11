@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import MoviesView from "./MoviesView";
 
 const Home = (props) => {
     useEffect(() => {

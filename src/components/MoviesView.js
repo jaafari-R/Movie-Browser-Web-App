@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 
 const IMG_URL = require('../TMDB.js').TMDB_IMG_URL_W500;
 
-const SearchView = (props) => {
+const MoviesView = (props) => {
 
     const [moviesCards, setMoviesCards] = useState([]);
 
     useEffect(() => {
-        props.setHero(`Looking for ${props.searchText}`);
+        if(props.isSearch)
+            props.setHero(`Looking for ${props.searchText}`);
     });
 
     useEffect(() => {
@@ -52,4 +53,4 @@ const SearchView = (props) => {
     );
 }
 
-export default SearchView;
+export default MoviesView;

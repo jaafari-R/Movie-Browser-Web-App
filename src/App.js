@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
 import About from './components/About';
-import SearchView from './components/SearchView';
+import MoviesView from './components/MoviesView';
 import Hero from './components/Hero';
 
 import './App.css';
@@ -27,7 +27,7 @@ function App() {
   // controls the search input
   const [searchText, setSearch] = useState('');
 
-  // Search Results - Movies list & page info
+  // Query Results - Movies list & page info
   const [movies, setMovies] = useState([]);
   const [page, setPage] = useState(0); // used to calculate movies cards keys
   const [isLastPage, setIsLastPage] = useState(true); // used for load-more button
@@ -35,6 +35,12 @@ function App() {
 
 
   useEffect(() => {
+
+    const getPopularMovies = () => {
+      return new Promise((res, rej) => {
+        res(tmdbApi.getPopularMovies(searchText));
+      });
+    }
 
     const searchMovies = () => {
       return new Promise((res, rej) => {
@@ -57,14 +63,25 @@ function App() {
     
     const searchTime = Date.now();
 
+    /**
+     * If no search was performed(searchText is empty), get the most popular movies
+     * otherwise query the searched movie/s
+     */
     if(!searchText)
-      return;
-    
-    searchMovies()
-      .then((moviesResult) => {
-        loadSearchResults(moviesResult, searchTime);
-      });
-  }, [resTime, searchText]);
+    {
+      getPopularMovies()
+        .then((moviesResult) => {
+          loadSearchResults(moviesResult, searchTime);
+        });
+    }
+    else
+    {
+      searchMovies()
+        .then((moviesResult) => {
+          loadSearchResults(moviesResult, searchTime);
+        });
+    }
+  }, [searchText]);
 
   return (
     <div>
@@ -73,11 +90,13 @@ function App() {
         <Navbar setSearch={setSearch} searchText={searchText}/>
         <Hero heroText={heroText}/>
         <Routes>
-          <Route exact path="/" element={<Home setHero={setHero}/>} />
-          <Route exact path="/about" element={<About setHero={setHero}/>} />
-          <Route exact path="/search" element={<SearchView
+          <Route exact path="/" element={[<Home setHero={setHero}/>, <MoviesView
             setHero={setHero} searchText={searchText} movies={movies}
-            page={page} isLastPage={isLastPage} />}
+            page={page} isLastPage={isLastPage} isSearch={false}/>]} />
+          <Route exact path="/about" element={<About setHero={setHero}/>} />
+          <Route exact path="/search" element={<MoviesView
+            setHero={setHero} searchText={searchText} movies={movies}
+            page={page} isLastPage={isLastPage} isSearch={true}/>}
           />
         </Routes>
       </BrowserRouter>
