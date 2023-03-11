@@ -29,38 +29,36 @@ function App() {
 
   // Query Results - Movies list & page info
   const [movies, setMovies] = useState([]);
-  const [page, setPage] = useState(0); // used to calculate movies cards keys
   const [isLastPage, setIsLastPage] = useState(true); // used for load-more button
   const [resTime, setResTime] = useState(Date.now()); // make sure to load only the last result
 
+  // when changed to be greater than 1, load more pages for the current query
+  const [page, setPage] = useState(1); // used to calculate movies cards keys
+
+  const getPopularMovies = () => {
+    return new Promise((res, rej) => {
+      res(tmdbApi.getPopularMovies(page));
+    });
+  }
+
+  const searchMovies = () => {
+    return new Promise((res, rej) => {
+      res(tmdbApi.searchMoviesByStringQuery(searchText, page));
+    });
+  }
+
+  const loadSearchResults = async (searchRes, searchTime, append=false) => {
+    if(searchTime < resTime && !append)
+      return;
+    
+    await searchRes
+
+    setResTime(searchTime);
+    setMovies([...movies, ...searchRes.movies]);
+    setIsLastPage(searchRes.isLastPage);
+  }
 
   useEffect(() => {
-
-    const getPopularMovies = () => {
-      return new Promise((res, rej) => {
-        res(tmdbApi.getPopularMovies(searchText));
-      });
-    }
-
-    const searchMovies = () => {
-      return new Promise((res, rej) => {
-        res(tmdbApi.searchMoviesByStringQuery(searchText));
-      });
-    }
-
-    const loadSearchResults = async (searchRes, searchTime) => {
-      if(searchTime < resTime)
-        return;
-      
-      await searchRes
-
-      setResTime(searchTime);
-      setMovies(searchRes.movies);
-      setPage(searchRes.page);
-      setIsLastPage(searchRes.isLastPage);
-    }
-
-    
     const searchTime = Date.now();
 
     /**
@@ -83,6 +81,27 @@ function App() {
     }
   }, [searchText]);
 
+  useEffect(() => {
+    if(page < 2)
+      return;
+    const searchTime = Date.now();
+
+    if(!searchText)
+    {
+      getPopularMovies(page)
+        .then((moviesResult) => {
+          loadSearchResults(moviesResult, searchTime, true);
+        });
+    }
+    else
+    {
+      searchMovies()
+        .then((moviesResult) => {
+          loadSearchResults(moviesResult, searchTime, true);
+        });
+    }
+  }, [page]);
+
   return (
     <div>
 
@@ -92,11 +111,11 @@ function App() {
         <Routes>
           <Route exact path="/" element={[<Home setHero={setHero}/>, <MoviesView
             setHero={setHero} searchText={searchText} movies={movies}
-            page={page} isLastPage={isLastPage} isSearch={false}/>]} />
+            page={page} isLastPage={isLastPage} isSearch={false} setPage={setPage}/>]} />
           <Route exact path="/about" element={<About setHero={setHero}/>} />
           <Route exact path="/search" element={<MoviesView
             setHero={setHero} searchText={searchText} movies={movies}
-            page={page} isLastPage={isLastPage} isSearch={true}/>}
+            page={page} isLastPage={isLastPage} isSearch={true} setPage={setPage}/>}
           />
         </Routes>
       </BrowserRouter>

@@ -42,13 +42,17 @@ const MoviesView = (props) => {
         );
     }
 
+    const loadMore = () => {
+        props.setPage(props.page + 1);
+    }
+
     return (
         <div className="container-fluid">
             <div className="row">
                 {moviesCards}
             </div>
             {!props.isLastPage && 
-                <button className="form-control">Load More <br/><img width="15vh" src="/down-arrow.png" alt="" /></button>}
+                <button onClick={loadMore} className="form-control">Load More <br/><img width="15vh" src="/down-arrow.png" alt="" /></button>}
         </div>
     );
 }
